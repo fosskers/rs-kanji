@@ -54,10 +54,11 @@ impl Kanji {
 
 /// A Hiragana character, from あ to ん.
 ///
-/// These are learned first by Japanese school children, and are used most often
-/// for grammatical word endings and prepositions. Some women's first names are
-/// written purely in Hiragana, as the characters themselves have a soft,
-/// flowing feel to them (very much unlike the blocky, angular Katakana).
+/// These are learned first by Japanese school children and foreign learners,
+/// and are used most often for grammatical word endings and prepositions. Some
+/// women's first names are written purely in Hiragana, as the characters
+/// themselves have a soft, flowing feel to them (very much unlike the blocky,
+/// angular Katakana).
 #[derive(Debug, PartialEq)]
 pub struct Hiragana(char);
 
@@ -86,6 +87,43 @@ impl Hiragana {
     }
 }
 
+/// A Katakana character, from ア to ン.
+///
+/// These are typically learned after Hiragana, and are used to represent
+/// foreign names, sound effects, and occasionally words whose Kanji are
+/// "difficult". Two such examples are ネズミ (鼠) and アリ (蟻).
+///
+/// It used to be common to use Katakana as Hiragana are used today, so the
+/// phrase君と街を歩きたい would have been written 君ト街ヲ歩キタイ. Admittedly
+/// strange to modern eyes!
+#[derive(Debug, PartialEq)]
+pub struct Katakana(char);
+
+impl Katakana {
+    /// Attempt to form a `Katakana`. Will fail if the given `char` is out of
+    /// the expected Unicode range.
+    ///
+    /// ```
+    /// use kanji::Katakana;
+    ///
+    /// assert_eq!(Some('ア'), Katakana::new('ア').map(|k| k.get()));
+    /// assert_eq!(None, Katakana::new('匙'));
+    /// assert_eq!(None, Katakana::new('a'));
+    /// ```
+    pub fn new(c: char) -> Option<Katakana> {
+        if is_katakana(c) {
+            Some(Katakana(c))
+        } else {
+            None
+        }
+    }
+
+    /// Pull out the inner `char`.
+    pub fn get(&self) -> char {
+        self.0
+    }
+}
+
 /// General categories for characters, at least as is useful for thinking about
 /// Japanese.
 ///
@@ -94,11 +132,11 @@ impl Hiragana {
 pub enum Character {
     Kanji(Kanji),
     Hiragana(Hiragana),
-    Katakana,
-    Number,
-    Letter,
-    Punctuation,
-    Other,
+    Katakana(Katakana),
+    Number(char),
+    Letter(char),
+    Punctuation(char),
+    Other(char),
 }
 
 impl Character {
