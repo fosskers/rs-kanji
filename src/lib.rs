@@ -2,13 +2,21 @@
 //! Kanji. It can be used to find the density of Kanji in given texts according
 //! to their *Level* classification, as defined by the Japan Kanji Aptitude
 //! Testing Foundation (日本漢字能力検定協会).
+//!
+//! # Usage
+//! Foobar
+//!
+//! # Resources
+//! - [CJK Unicode Chart](https://www.unicode.org/charts/PDF/U4E00.pdf) (pdf)
+//! - [StackOverflow: Unicode Ranges for Japanese](https://stackoverflow.com/q/19899554/643684)
 
 use std::char;
 
-/// A single symbol of Kanji. Japanese Kanji were borrowed from China over
-/// several waves during the last 1,500 years. Japan declares 2,136 of these as
-/// their standard set, with rarer characters being the domain of place names,
-/// academia and writers.
+/// A single symbol of Kanji.
+///
+/// Japanese Kanji were borrowed from China over several waves during the last
+/// 1,500 years. Japan declares 2,136 of these as their standard set, with rarer
+/// characters being the domain of place names, academia and writers.
 ///
 /// Japanese has many Japan-only Kanji. Common ones include:
 ///
@@ -124,6 +132,91 @@ impl Katakana {
     }
 }
 
+/// Japanese symbols and punctuation.
+#[derive(Debug, PartialEq)]
+pub struct Punctuation(char);
+
+impl Punctuation {
+    /// Attempt to form a `Punctuation`. Will fail if the given `char` is out of
+    /// the expected Unicode range.
+    ///
+    /// ```
+    /// use kanji::Punctuation;
+    ///
+    /// assert_eq!(Some('。'), Punctuation::new('。').map(|k| k.get()));
+    /// assert_eq!(None, Punctuation::new('a'));
+    /// ```
+    pub fn new(c: char) -> Option<Punctuation> {
+        if is_japanese_punct(c) {
+            Some(Punctuation(c))
+        } else {
+            None
+        }
+    }
+
+    /// Pull out the inner `char`.
+    pub fn get(&self) -> char {
+        self.0
+    }
+}
+
+/// Japanese full-width alphanumeric characters and a few punctuation symbols.
+#[derive(Debug, PartialEq)]
+pub struct AlphaNum(char);
+
+impl AlphaNum {
+    /// Attempt to form a `AlphaNum`. Will fail if the given `char` is out of
+    /// the expected Unicode range.
+    ///
+    /// ```
+    /// use kanji::AlphaNum;
+    ///
+    /// assert_eq!(Some('Ａ'), AlphaNum::new('Ａ').map(|k| k.get()));
+    /// assert_eq!(Some('＊'), AlphaNum::new('＊').map(|k| k.get()));
+    /// assert_eq!(None, AlphaNum::new('a'));
+    /// ```
+    pub fn new(c: char) -> Option<AlphaNum> {
+        if is_alphanum(c) {
+            Some(AlphaNum(c))
+        } else {
+            None
+        }
+    }
+
+    /// Pull out the inner `char`.
+    pub fn get(&self) -> char {
+        self.0
+    }
+}
+
+/// A standard ASCII character.
+#[derive(Debug, PartialEq)]
+pub struct ASCII(char);
+
+impl ASCII {
+    /// Attempt to form a `ASCII`. Will fail if the given `char` is out of
+    /// the expected Unicode range.
+    ///
+    /// ```
+    /// use kanji::ASCII;
+    ///
+    /// assert_eq!(Some('a'), ASCII::new('a').map(|k| k.get()));
+    /// assert_eq!(None, ASCII::new('あ'));
+    /// ```
+    pub fn new(c: char) -> Option<ASCII> {
+        if char::is_ascii(&c) {
+            Some(ASCII(c))
+        } else {
+            None
+        }
+    }
+
+    /// Pull out the inner `char`.
+    pub fn get(&self) -> char {
+        self.0
+    }
+}
+
 /// General categories for characters, at least as is useful for thinking about
 /// Japanese.
 ///
@@ -133,13 +226,25 @@ pub enum Character {
     Kanji(Kanji),
     Hiragana(Hiragana),
     Katakana(Katakana),
-    Number(char),
-    Letter(char),
-    Punctuation(char),
+    Punctuation(Punctuation),
+    AlphaNum(AlphaNum),
+    ASCII(ASCII),
     Other(char),
 }
 
 impl Character {
+    /// Form a new `Character` from some `char`.
+    pub fn new(c: char) -> Character {
+        Kanji::new(c)
+            .map(Character::Kanji)
+            .or(Hiragana::new(c).map(Character::Hiragana))
+            .or(Katakana::new(c).map(Character::Katakana))
+            .or(Punctuation::new(c).map(Character::Punctuation))
+            .or(AlphaNum::new(c).map(Character::AlphaNum))
+            .or(ASCII::new(c).map(Character::ASCII))
+            .unwrap_or(Character::Other(c))
+    }
+
     /// A convenience method for attempting to extract a possible `Kanji`.
     pub fn kanji(&self) -> Option<Kanji> {
         match self {
@@ -183,8 +288,8 @@ pub enum Level {
     Unknown,
 }
 
-/// [CJK Unified Ideographs] (aka "Kanji") appear in the Unicode range 4e00 (一)
-/// to 9ffc. The final Japanese Kanji is 9fef (鿯).
+/// [CJK Unified Ideographs] ("Kanji") appear in the Unicode range 4e00 to 9ffc.
+/// The final Japanese Kanji is 9fef (鿯).
 ///
 /// For a chart of the full official range, see [this pdf] from the Unicode
 /// organization.
@@ -207,7 +312,7 @@ pub fn is_kanji(c: char) -> bool {
 /// assert!(!kanji::is_hiragana('a'));
 /// ```
 pub fn is_hiragana(c: char) -> bool {
-    c >= '\u{3040}' && c <= '\u{309f}'
+    c >= '\u{3041}' && c <= '\u{309f}'
 }
 
 /// Is a given `char` between ア and ン?
@@ -218,6 +323,17 @@ pub fn is_hiragana(c: char) -> bool {
 /// ```
 pub fn is_katakana(c: char) -> bool {
     c >= '\u{30a0}' && c <= '\u{30ff}'
+}
+
+/// Does a given `char` belong to the set of Japanese symbols and punctuation?
+pub fn is_japanese_punct(c: char) -> bool {
+    c >= '\u{3000}' && c <= '\u{303f}'
+}
+
+/// Does a given `char` belong to the set of Japanese alphanumeric characters
+/// and western punctuation?
+pub fn is_alphanum(c: char) -> bool {
+    c >= '\u{ff01}' && c <= '\u{ff5e}'
 }
 
 /// All possible Kanji characters, as well as non-character radicals, in a
