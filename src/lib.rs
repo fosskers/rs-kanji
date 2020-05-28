@@ -355,14 +355,19 @@ pub enum Level {
 /// For a chart of the full official range, see [this pdf] from the Unicode
 /// organization.
 ///
+/// A number of Level Pre-One Kanji appear in the [CJK Compatibility
+/// Ideographs][compat] list, so there is an extra check here for those.
+///
 /// ```
 /// assert!(kanji::is_kanji(&'澄'));  // Obviously a legal Kanji.
 /// assert!(!kanji::is_kanji(&'a'));  // Obviously not.
 /// ```
 ///
+/// [compat]: https://www.unicode.org/charts/PDF/UF900.pdf
 /// [this pdf]: https://www.unicode.org/charts/PDF/U4E00.pdf
 pub fn is_kanji(c: &char) -> bool {
-    *c >= '\u{4e00}' && *c <= '\u{9ffc}'
+    (*c >= '\u{4e00}' && *c <= '\u{9ffc}') // Standard set.
+        || (*c >= '\u{f900}' && *c <= '\u{faff}') // CJK Compatibility Ideographs.
 }
 
 /// Detect if a `char` is Kanji while accounting for all of the Unicode CJK
@@ -371,6 +376,7 @@ pub fn is_kanji(c: &char) -> bool {
 /// `is_kanji` should be enough for normal use.
 pub fn is_kanji_extended(c: &char) -> bool {
     (*c >= '\u{4e00}' && *c <= '\u{9ffc}') // Standard set.
+        || (*c >= '\u{f900}' && *c <= '\u{faff}') // CJK Compatibility Ideographs.
         || (*c >= '\u{3400}' && *c <= '\u{4dbf}') // Extension A
         || (*c >= '\u{20000}' && *c <= '\u{2a6dd}') // Extension B
         || (*c >= '\u{2a700}' && *c <= '\u{2b734}') // Extension C
@@ -675,6 +681,21 @@ mod tests {
 
         assert_eq!(20989, ks.chars().count());
         assert_eq!(62967, ks.len()); // Bytes.
+    }
+
+    #[test]
+    fn all_kanjiable() {
+        assert!(LEVEL_10.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_09.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_08.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_07.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_06.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_05.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_04.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_03.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_02_PRE.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_02.chars().all(|c| is_kanji(&c)));
+        assert!(LEVEL_01_PRE.chars().all(|c| is_kanji(&c)));
     }
 
     #[test]
