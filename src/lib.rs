@@ -438,10 +438,6 @@ pub fn by_level() -> HashMap<Kanji, Level> {
 
 /// The lowest level of the Kanji exam, learned in the 1st year of Japanese
 /// elementary school.
-///
-/// ```
-/// assert_eq!(80, kanji::LEVEL_10.chars().count());
-/// ```
 pub const LEVEL_10: &str = "\
 一七三上下中九二五人休先入八六円出力十千\
 口右名四土夕大天女子字学小山川左年手文日\
@@ -449,10 +445,6 @@ pub const LEVEL_10: &str = "\
 百目石空立竹糸耳花草虫見貝赤足車金雨青音";
 
 /// These are learned in the 2nd year of Japanese elementary school.
-///
-/// ```
-/// assert_eq!(160, kanji::LEVEL_09.chars().count());
-/// ```
 pub const LEVEL_09: &str = "\
 万丸交京今会体何作元兄光公内冬刀分切前北\
 午半南原友古台合同回図国園地場声売夏外多\
@@ -464,10 +456,6 @@ pub const LEVEL_09: &str = "\
 野長門間雪雲電頭顔風食首馬高魚鳥鳴麦黄黒";
 
 /// These are learned in the 3rd year of Japanese elementary school.
-///
-/// ```
-/// assert_eq!(200, kanji::LEVEL_08.chars().count());
-/// ```
 pub const LEVEL_08: &str = "\
 丁世両主乗予事仕他代住使係倍全具写列助勉\
 動勝化区医去反取受号向君味命和品員商問坂\
@@ -481,10 +469,6 @@ pub const LEVEL_08: &str = "\
 遊運部都配酒重鉄銀開院陽階集面題飲館駅鼻";
 
 /// These are learned in the 4th year of Japanese elementary school.
-///
-/// ```
-/// assert_eq!(202, kanji::LEVEL_07.chars().count());
-/// ```
 pub const LEVEL_07: &str = "\
 不争井付令以仲伝位低佐例便信倉候借健側働\
 億兆児共兵典冷初別利刷副功加努労勇包卒協\
@@ -499,10 +483,6 @@ pub const LEVEL_07: &str = "\
 験鹿";
 
 /// These are learned in the 5th year of Japanese elementary school.
-///
-/// ```
-/// assert_eq!(193, kanji::LEVEL_06.chars().count());
-/// ```
 pub const LEVEL_06: &str = "\
 久仏仮件任似余価保修個停備像再刊判制則効\
 務勢厚句可史告喜営因団囲圧在均型基堂報境\
@@ -519,10 +499,6 @@ pub const LEVEL_06: &str = "\
 /// year before middle school.
 ///
 /// 1,026 Kanji are learned by this point.
-///
-/// ```
-/// assert_eq!(191, kanji::LEVEL_05.chars().count());
-/// ```
 pub const LEVEL_05: &str = "\
 並乱乳亡仁供俳俵値傷優党冊処券刻割創劇勤\
 危卵厳収后否吸呼善困垂域奏奮姿存孝宅宇宗\
@@ -536,10 +512,6 @@ pub const LEVEL_05: &str = "\
 閉閣降陛除障難革頂預骨";
 
 /// These are learned in middle school.
-///
-/// ```
-/// assert_eq!(313, kanji::LEVEL_04.chars().count());
-/// ```
 pub const LEVEL_04: &str = "\
 丈与丘丹乾互介仰伺依侵俗倒偉傍傾僧儀兼冒\
 凡凶刈到刺剣剤劣勧匹占即却及叫召吐含吹咲\
@@ -559,10 +531,6 @@ pub const LEVEL_04: &str = "\
 項頼飾駆騒驚髪鬼鮮麗黙鼓齢";
 
 /// These are learned by the end of middle school.
-///
-/// ```
-/// assert_eq!(284, kanji::LEVEL_03.chars().count());
-/// ```
 pub const LEVEL_03: &str = "\
 乏乙了企伏伐伴伸佳侍促倣倹偶催債克免冗冠\
 凍凝刑削励勘募匠匿卑卓卸厘又双吉吏哀哲啓\
@@ -581,10 +549,6 @@ pub const LEVEL_03: &str = "\
 魅魔鯨鶏";
 
 /// These are learned by the end of high school.
-///
-/// ```
-/// assert_eq!(328, kanji::LEVEL_02P.chars().count());
-/// ```
 pub const LEVEL_02P: &str = "\
 且丙亜享亭仙伯但併侮侯俊俸倫偏偵偽傑傘僕\
 僚儒償充准凸凹刃剖剛剰劾勅勲升厄叔叙吟呈\
@@ -605,10 +569,6 @@ pub const LEVEL_02P: &str = "\
 頑頒頻顕飢駄騰麻";
 
 /// These are considered "standard adult level".
-///
-/// ```
-/// assert_eq!(185, kanji::LEVEL_02.chars().count());
-/// ```
 pub const LEVEL_02: &str = "\
 串丼乞亀伎侶俺傲僅冥冶凄刹剥勃勾匂叱呂呪\
 咽哺唄唾喉喩嗅嘲堆塞填妖妬嫉宛尻崖嵐巾弄\
@@ -624,6 +584,20 @@ pub const LEVEL_02: &str = "\
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn kanji_list_lengths() {
+        assert_eq!(80, LEVEL_10.chars().count());
+        assert_eq!(160, LEVEL_09.chars().count());
+        assert_eq!(200, LEVEL_08.chars().count());
+        assert_eq!(202, LEVEL_07.chars().count());
+        assert_eq!(193, LEVEL_06.chars().count());
+        assert_eq!(191, LEVEL_05.chars().count());
+        assert_eq!(313, LEVEL_04.chars().count());
+        assert_eq!(284, LEVEL_03.chars().count());
+        assert_eq!(328, LEVEL_02P.chars().count());
+        assert_eq!(185, LEVEL_02.chars().count());
+    }
 
     #[test]
     fn elementary() {
