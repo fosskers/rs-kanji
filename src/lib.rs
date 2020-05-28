@@ -3,6 +3,9 @@
 //! to their *Level* classification, as defined by the Japan Kanji Aptitude
 //! Testing Foundation (日本漢字能力検定協会).
 //!
+//! The Kanji data presented here matches the Foundation's official 2020
+//! February charts.
+//!
 //! # Usage
 //!
 //! Two main useful types are `Character` and `Kanji`.
@@ -26,10 +29,13 @@
 //! use std::fs;
 //! use kanji::Kanji;
 //!
-//! let cs: Option<Vec<Kanji>> = fs::read_to_string("your-text.txt")
+//! let ks: Option<Vec<Kanji>> = fs::read_to_string("your-text.txt")
 //!   .map(|content| content.chars().filter_map(Kanji::new).collect())
 //!   .ok();
 //! ```
+//!
+//! Alongside normal pattern matching, the `Character::kanji` method can also
+//! help us extract `Kanji` values.
 //!
 //! ### Filtering
 //!
@@ -48,9 +54,13 @@
 //!
 //! ### Level Analysis
 //!
+//! The `Kanji::level` method tells us what testing `Level` a given Kanji
+//! belongs to.
+//!
 //! # Resources
 //! - [CJK Unicode Chart](https://www.unicode.org/charts/PDF/U4E00.pdf) (pdf)
 //! - [StackOverflow: Unicode Ranges for Japanese](https://stackoverflow.com/q/19899554/643684)
+//! - [級別漢字表](https://www.kanken.or.jp/kanken/outline/data/outline_degree_national_list20200217.pdf) (pdf)
 
 use std::char;
 
@@ -398,5 +408,112 @@ pub fn all_kanji() -> String {
     s
 }
 
+/// The lowest level of the Kanji exam, learned in the 1st year of Japanese
+/// elementary school.
+///
+/// ```
+/// assert_eq!(80, kanji::LEVEL_10.chars().count());
+/// ```
+pub const LEVEL_10: &str = "\
+一七三上下中九二五人休先入八六円出力十千\
+口右名四土夕大天女子字学小山川左年手文日\
+早月木本村林校森正気水火犬玉王生田男町白\
+百目石空立竹糸耳花草虫見貝赤足車金雨青音";
+
+/// These are learned in the 2nd year of Japanese elementary school.
+///
+/// ```
+/// assert_eq!(160, kanji::LEVEL_09.chars().count());
+/// ```
+pub const LEVEL_09: &str = "\
+万丸交京今会体何作元兄光公内冬刀分切前北\
+午半南原友古台合同回図国園地場声売夏外多\
+夜太妹姉室家寺少岩工市帰広店弓引弟弱強当\
+形後心思戸才教数新方明星春昼時晴曜書朝来\
+東楽歌止歩母毎毛池汽活海点父牛理用画番直\
+矢知社秋科答算米紙細組絵線羽考聞肉自船色\
+茶行西親角言計記話語読谷買走近通週道遠里\
+野長門間雪雲電頭顔風食首馬高魚鳥鳴麦黄黒";
+
+/// These are learned in the 3rd year of Japanese elementary school.
+///
+/// ```
+/// assert_eq!(200, kanji::LEVEL_08.chars().count());
+/// ```
+pub const LEVEL_08: &str = "\
+丁世両主乗予事仕他代住使係倍全具写列助勉\
+動勝化区医去反取受号向君味命和品員商問坂\
+央始委守安定実客宮宿寒対局屋岸島州帳平幸\
+度庫庭式役待急息悪悲想意感所打投拾持指放\
+整旅族昔昭暑暗曲有服期板柱根植業様横橋次\
+歯死氷決油波注泳洋流消深温港湖湯漢炭物球\
+由申界畑病発登皮皿相県真着短研礼神祭福秒\
+究章童笛第筆等箱級終緑練羊美習者育苦荷落\
+葉薬血表詩調談豆負起路身転軽農返追送速進\
+遊運部都配酒重鉄銀開院陽階集面題飲館駅鼻";
+
+/// These are learned in the 4th year of Japanese elementary school.
+///
+/// ```
+/// assert_eq!(202, kanji::LEVEL_07.chars().count());
+/// ```
+pub const LEVEL_07: &str = "\
+不争付令以仲伝位低例便信倉候借停健側働億\
+兆児共兵典冷初別利刷副功加努労勇包卒協単\
+博印参史司各告周唱喜器囲固型堂塩士変夫失\
+好季孫完官害察巣差希席帯底府康建径徒得必\
+念愛成戦折挙改救敗散料旗昨景最望未末札材\
+束松果栄案梅械極標機欠歴残殺毒氏民求治法\
+泣浅浴清満漁灯無然焼照熱牧特産的省祝票種\
+積競笑管節粉紀約結給続置老胃脈腸臣航良芸\
+芽英菜街衣要覚観訓試説課議象貨貯費賞軍輪\
+辞辺連達選郡量録鏡関陸隊静順願類飛飯養験";
+
+/// These are learned in the 5th year of Japanese elementary school.
+///
+/// ```
+/// assert_eq!(193, kanji::LEVEL_06.chars().count());
+/// ```
+pub const LEVEL_06: &str = "\
+久仏仮件任似余価保修俵個備像再刊判制券則\
+効務勢厚句可営因団圧在均基報境墓増夢妻婦\
+容寄富導居属布師常幹序弁張往復徳志応快性\
+恩情態慣承技招授採接提損支政故敵断旧易暴\
+条枝査格桜検構武比永河液混減測準演潔災燃\
+版犯状独率現留略益眼破確示祖禁移程税築精\
+素経統絶綿総編績織罪群義耕職肥能興舌舎術\
+衛製複規解設許証評講謝識護豊財貧責貸貿賀\
+資賛質輸述迷退逆造過適酸鉱銅銭防限険際雑\
+非預領額飼";
+
+/// These are learned in the 6th year of Japanese elementary school, the final
+/// year before middle school.
+///
+/// 1,026 Kanji are learned by this point.
+///
+/// ```
+/// assert_eq!(191, kanji::LEVEL_05.chars().count());
+/// ```
+pub const LEVEL_05: &str = "\
+並乱乳亡仁供俳値傷優党冊処刻割創劇勤危卵\
+厳収后否吸呼善困垂城域奏奮姿存孝宅宇宗宙\
+宝宣密寸専射将尊就尺届展層己巻幕干幼庁座\
+延律従忘忠憲我批担拝拡捨探推揮操敬映晩暖\
+暮朗机枚染株棒模権樹欲段沿泉洗派済源潮激\
+灰熟片班異疑痛皇盛盟看砂磁私秘穀穴窓筋策\
+簡糖系紅納純絹縦縮署翌聖肺背胸脳腹臓臨至\
+若著蒸蔵蚕衆裁装裏補視覧討訪訳詞誌認誕誠\
+誤論諸警貴賃遺郵郷針鋼閉閣降陛除障難革頂\
+骨";
+
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use super::*;
+
+    #[test]
+    fn elementary() {
+        let ks = vec![LEVEL_10, LEVEL_09, LEVEL_08, LEVEL_07, LEVEL_06, LEVEL_05];
+
+        assert_eq!(1026, ks.concat().chars().count());
+    }
+}
