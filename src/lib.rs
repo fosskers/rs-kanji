@@ -63,6 +63,7 @@
 //! - [級別漢字表](https://www.kanken.or.jp/kanken/outline/data/outline_degree_national_list20200217.pdf) (pdf)
 
 use std::char;
+use std::collections::HashMap;
 
 /// A single symbol of Kanji, also known as a [CJK Unified Ideograph][cjk].
 ///
@@ -81,7 +82,7 @@ use std::char;
 /// represented by a single internal `char`.
 ///
 /// [cjk]: https://en.wikipedia.org/wiki/Han_unification
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 pub struct Kanji(char);
 
 impl Kanji {
@@ -326,6 +327,7 @@ impl Character {
 ///
 /// Level data for Kanji above Level-2 is currently not provided by this
 /// library.
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Level {
     Ten,
     Nine,
@@ -406,6 +408,32 @@ pub fn all_kanji() -> String {
         .filter_map(char::from_u32)
         .for_each(|c| s.push(c));
     s
+}
+
+/// Using the data stored in the `LEVEL_*` constants, generate a lookup table
+/// for Kanji levels.
+pub fn by_level() -> HashMap<Kanji, Level> {
+    let pairs = vec![
+        (LEVEL_10, Level::Ten),
+        (LEVEL_09, Level::Nine),
+        (LEVEL_08, Level::Eight),
+        (LEVEL_07, Level::Seven),
+        (LEVEL_06, Level::Six),
+        (LEVEL_05, Level::Five),
+        (LEVEL_04, Level::Four),
+        (LEVEL_03, Level::Three),
+        (LEVEL_02P, Level::PreTwo),
+        (LEVEL_02, Level::Two),
+    ];
+    let mut hm = HashMap::new();
+
+    pairs.iter().for_each(|(c, l)| {
+        c.chars().filter_map(Kanji::new).for_each(|k| {
+            hm.insert(k, *l);
+        });
+    });
+
+    hm
 }
 
 /// The lowest level of the Kanji exam, learned in the 1st year of Japanese
@@ -612,5 +640,10 @@ mod tests {
         ];
 
         assert_eq!(2136, ks.concat().chars().count());
+    }
+
+    #[test]
+    fn test_by_level() {
+        assert_eq!(2136, by_level().len());
     }
 }
