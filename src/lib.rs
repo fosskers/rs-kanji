@@ -107,12 +107,6 @@ impl Kanji {
     pub fn get(&self) -> char {
         self.0
     }
-
-    /// The level or "kyuu" (級) of the Kanji, according to the official
-    /// ordering from the Testing Foundation.
-    pub fn level(&self) -> Level {
-        Level::Unknown
-    }
 }
 
 /// A Hiragana character, from あ to ん.
@@ -341,7 +335,6 @@ pub enum Level {
     Two,
     PreOne,
     One,
-    Unknown,
 }
 
 /// Kanji appear in the Unicode range 4e00 to 9ffc.
