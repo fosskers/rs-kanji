@@ -4,7 +4,49 @@
 //! Testing Foundation (日本漢字能力検定協会).
 //!
 //! # Usage
-//! Foobar
+//!
+//! Two main useful types are `Character` and `Kanji`.
+//!
+//! ### Reading Japanese Text
+//!
+//! To reinterpret every `char` of the input into a `Character` we can reason about:
+//!
+//! ```
+//! use std::fs;
+//! use kanji::Character;
+//!
+//! let cs: Option<Vec<Character>> = fs::read_to_string("your-text.txt")
+//!   .map(|content| content.chars().map(Character::new).collect())
+//!   .ok();
+//! ```
+//!
+//! But maybe we're just interested in the Kanji:
+//!
+//! ```
+//! use std::fs;
+//! use kanji::Kanji;
+//!
+//! let cs: Option<Vec<Kanji>> = fs::read_to_string("your-text.txt")
+//!   .map(|content| content.chars().filter_map(Kanji::new).collect())
+//!   .ok();
+//! ```
+//!
+//! ### Filtering
+//!
+//! In general, when we want to reduce a text to a single `Character` subtype,
+//! we can `filter`:
+//!
+//! ```
+//! let orig = "そこで犬が寝ている";
+//!
+//! let ks: String = orig.chars().filter(kanji::is_kanji).collect();
+//! assert_eq!("犬寝", ks);
+//!
+//! let hs: String = orig.chars().filter(kanji::is_hiragana).collect();
+//! assert_eq!("そこでがている", hs);
+//! ```
+//!
+//! ### Level Analysis
 //!
 //! # Resources
 //! - [CJK Unicode Chart](https://www.unicode.org/charts/PDF/U4E00.pdf) (pdf)
@@ -12,7 +54,7 @@
 
 use std::char;
 
-/// A single symbol of Kanji, also known as a [CJK Unified Ideograph].
+/// A single symbol of Kanji, also known as a [CJK Unified Ideograph][cjk].
 ///
 /// Japanese Kanji were borrowed from China over several waves during the last
 /// 1,500 years. Japan declares 2,136 of these as their standard set, with rarer
@@ -28,7 +70,7 @@ use std::char;
 /// Kanji or otherwise, are a single Unicode Scalar Value, and thus can be
 /// represented by a single internal `char`.
 ///
-/// [CJK Unified Ideograph]: https://en.wikipedia.org/wiki/Han_unification
+/// [cjk]: https://en.wikipedia.org/wiki/Han_unification
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Kanji(char);
 
