@@ -739,6 +739,13 @@ mod tests {
     }
 
     #[test]
+    fn sane_overwrite() {
+        let k = Kanji::new('氣').unwrap();
+        let m = by_level();
+        assert_eq!(Some(&Level::PreOne), m.get(&k))
+    }
+
+    #[test]
     fn lookup_map_length() {
         let m = by_level();
         assert_eq!(5906, m.len());
