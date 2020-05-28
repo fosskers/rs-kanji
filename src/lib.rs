@@ -448,6 +448,10 @@ pub fn by_level() -> HashMap<Kanji, Level> {
         (LEVEL_03, Level::Three),
         (LEVEL_02_PRE, Level::PreTwo),
         (LEVEL_02, Level::Two),
+        (LEVEL_01, Level::One),
+        // PreOne is added afterward to account for the 396 characters that
+        // appear in both level One and PreOne.
+        (LEVEL_01_PRE, Level::PreOne),
     ];
     let mut hm = HashMap::new();
 
@@ -587,7 +591,11 @@ pub const LEVEL_01_PRE: &str = "\
 懲敏既暑梅海渚漢煮琢碑社祉祈祐祖祝禍禎穀突節練繁署者臭著褐視謁謹賓贈逸難響頻";
 
 /// The highest examination level, which nearly doubles the existing set with an
-/// additional 2,928 characters.
+/// additional 2,532 unique characters.
+///
+/// However, the official listing itself contains 2,928 characters. The
+/// difference (396) are characters listed in both levels Pre-One and One. For
+/// the purpose of lookups via `by_level`, such Kanji will appear as `PreOne`.
 pub const LEVEL_01: &str = "\
 乂几匕匚丫于兀孑孒尸已幺弋丐亢仂仄仆仍卅夬夭尹弌弖戈扎曰毋丕丱仗仞仟册刋匆卉卮叨\
 叭叮叺圦夲孕屶弍戉朮艾辷价伉冱凩刎刔匈卍吁夸奸屹幵忖戌戍扛扞扠扣扨收朶朸朿汕犲聿\
@@ -667,6 +675,7 @@ pub const LEVEL_01: &str = "\
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::HashSet;
 
     #[test]
     fn unicode_ranges() {
@@ -709,6 +718,33 @@ mod tests {
     }
 
     #[test]
+    fn all_unique() {
+        let ks = vec![
+            LEVEL_10,
+            LEVEL_09,
+            LEVEL_08,
+            LEVEL_07,
+            LEVEL_06,
+            LEVEL_05,
+            LEVEL_04,
+            LEVEL_03,
+            LEVEL_02_PRE,
+            LEVEL_02,
+            LEVEL_01_PRE,
+            // LEVEL_01,
+        ];
+
+        let as_set: HashSet<_> = ks.concat().chars().collect();
+        assert_eq!(as_set.len(), ks.concat().chars().count());
+    }
+
+    #[test]
+    fn lookup_map_length() {
+        let m = by_level();
+        assert_eq!(5906, m.len());
+    }
+
+    #[test]
     fn elementary() {
         let ks = vec![LEVEL_10, LEVEL_09, LEVEL_08, LEVEL_07, LEVEL_06, LEVEL_05];
 
@@ -731,10 +767,5 @@ mod tests {
         ];
 
         assert_eq!(2136, ks.concat().chars().count());
-    }
-
-    #[test]
-    fn test_by_level() {
-        assert_eq!(2136, by_level().len());
     }
 }
