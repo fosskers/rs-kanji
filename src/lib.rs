@@ -4,7 +4,8 @@
 //! Testing Foundation (日本漢字能力検定協会).
 //!
 //! The Kanji data presented here matches the Foundation's official 2020
-//! February charts.
+//! February charts. Note that [some Kanji had their levels changed][changed]
+//! (pdf) as of 2020.
 //!
 //! # Usage
 //!
@@ -54,13 +55,28 @@
 //!
 //! ### Level Analysis
 //!
-//! The `Kanji::level` method tells us what testing `Level` a given Kanji
-//! belongs to.
+//! TODO
+//!
+//! # Notes on Unicode
+//!
+//! All Japanese characters, Kanji or otherwise, are a single Unicode Scalar
+//! Value, and thus can be safely represented by a single internal `char`.
+//!
+//! Further, the ordering of Kanji in the official Foundation lists is in no way
+//! related to their ordering in Unicode, since in Unicode, Kanji are grouped by
+//! radical. So:
+//!
+//! ```
+//! let same_as_uni = kanji::LEVEL_10.chars().max() < kanji::LEVEL_09.chars().min();
+//! assert!(!same_as_uni);
+//! ```
 //!
 //! # Resources
 //! - [CJK Unicode Chart](https://www.unicode.org/charts/PDF/U4E00.pdf) (pdf)
 //! - [StackOverflow: Unicode Ranges for Japanese](https://stackoverflow.com/q/19899554/643684)
 //! - [級別漢字表](https://www.kanken.or.jp/kanken/outline/data/outline_degree_national_list20200217.pdf) (pdf)
+//!
+//! [changed]: https://www.kanken.or.jp/kanken/topics/data/alterclassofkanji2020.pdf
 
 use std::char;
 use std::collections::HashMap;
@@ -76,10 +92,6 @@ use std::collections::HashMap;
 /// - 畑 (a type of rice field)
 /// - 峠 (a narrow mountain pass)
 /// - 働 (to do physical labour)
-///
-/// With regards to Rust's string-handling nuances: all Japanese characters,
-/// Kanji or otherwise, are a single Unicode Scalar Value, and thus can be
-/// represented by a single internal `char`.
 ///
 /// [cjk]: https://en.wikipedia.org/wiki/Han_unification
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
@@ -353,6 +365,21 @@ pub fn is_kanji(c: &char) -> bool {
     *c >= '\u{4e00}' && *c <= '\u{9ffc}'
 }
 
+/// Detect if a `char` is Kanji while accounting for all of the Unicode CJK
+/// extensions.
+///
+/// `is_kanji` should be enough for normal use.
+pub fn is_kanji_extended(c: &char) -> bool {
+    (*c >= '\u{4e00}' && *c <= '\u{9ffc}') // Standard set.
+        || (*c >= '\u{3400}' && *c <= '\u{4dbf}') // Extension A
+        || (*c >= '\u{20000}' && *c <= '\u{2a6dd}') // Extension B
+        || (*c >= '\u{2a700}' && *c <= '\u{2b734}') // Extension C
+        || (*c >= '\u{2b740}' && *c <= '\u{2b81d}') // Extension D
+        || (*c >= '\u{2b820}' && *c <= '\u{2cea1}') // Extension E
+        || (*c >= '\u{2ceb0}' && *c <= '\u{2ebe0}') // Extension F
+        || (*c >= '\u{30000}' && *c <= '\u{3134a}') // Extension G
+}
+
 /// Is a given `char` betwen あ and ん?
 ///
 /// ```
@@ -392,8 +419,6 @@ pub fn is_alphanum(c: &char) -> bool {
 ///
 /// assert_eq!(Some('一'), ks.chars().next());
 /// assert_eq!(Some('\u{9ffc}'), ks.chars().last());
-/// assert_eq!(20989, ks.chars().count());
-/// assert_eq!(62967, ks.len()); // Bytes.
 /// ```
 pub fn all_kanji() -> String {
     let mut s = String::with_capacity(62967); // Capacity in bytes.
@@ -415,7 +440,7 @@ pub fn by_level() -> HashMap<Kanji, Level> {
         (LEVEL_05, Level::Five),
         (LEVEL_04, Level::Four),
         (LEVEL_03, Level::Three),
-        (LEVEL_02P, Level::PreTwo),
+        (LEVEL_02_PRE, Level::PreTwo),
         (LEVEL_02, Level::Two),
     ];
     let mut hm = HashMap::new();
@@ -542,7 +567,7 @@ pub const LEVEL_03: &str = "\
 魅魔鯨鶏";
 
 /// These are learned by the end of high school.
-pub const LEVEL_02P: &str = "\
+pub const LEVEL_02_PRE: &str = "\
 且丙亜享亭仙伯但併侮侯俊俸倫偏偵偽傑傘僕\
 僚儒償充准凸凹刃剖剛剰劾勅勲升厄叔叙吟呈\
 呉唆唇唯喝喪嗣嚇囚坪垣培堀堕堪塀塁塑塚塾\
@@ -574,9 +599,83 @@ pub const LEVEL_02: &str = "\
 酎醒采釜錦錮鍋鍵鎌闇隙韓頃須頓頬顎餅餌駒\
 骸鬱鶴麓麺";
 
+/// The second-highest level, which adds an additional 1,238 characters on top
+/// of the standard 常用 set.
+pub const LEVEL_01_PRE: &str = "\
+乃卜也勺叉巳丑之云什仇允勿匁壬尤巴廿乍乎\
+仔册凧匝卯叩只叶弗弘戊汀疋禾丞亘亙亥亦伊\
+伍兇凪匡吃吊吋圭夙夷尖庄弛戎托收旭曳此汐\
+汝牝牟瓜而肋舛艮辻羽些亨伶伽佃佑佛兎冴劫\
+吞吠吻吾呆坐壯妓孜宋宍宏庇扮李杏杓杖杜杢\
+步每汲沌沒灸灼牡牢玖甫禿芙芥芭芹苅辰辿迂\
+迄邑酉免亞佼侃來兒兩其函卦卷坤坦奄妾姐姑\
+孟宕尭屆岨岱帖庖庚忽怜怯或戾拂拔斧於昂昌\
+昏朋杭杵杷枇欣沓沫爭狀狗狛祁竺肱肴臥舍苑\
+苓苔苧苫茄茅阿陀靑卑社亮俄俠俣剃卽叛咳哉\
+垢姥姦姪姶娃宥屍巷廻彦恆恢恰拜按柁柊柏柑\
+柘柚柴柾栂歪殆毘洛洩洲狐玲珂珊盃盈矧祇祐\
+穿竿籾粁粂耶胡胤茜茸荊荏虻衿迦郁酋頁侮勉\
+祉祈突者乘俱倂倖倦倭凌匪哨哩啄圃套娩屑峨\
+峯峻峽徑恕悅悌挺挽挾捌效晃晉晋晒朔栖栗栴\
+桂桐桓桔氣浩浬涉涌烏狸狹狼狽珪畠疹眞矩砥\
+砦砧祕秤秦窄竝笈粍紐紗紘缺耽脆荻莖莞莫蚤\
+訊豹迺郞釘閃隼益神悔海祐祖祝臭假偓偲兜凰\
+匙區參啐啞圈國埠埴娼婁寅將專巢帶庵彪彬從\
+悉惇惚惟捧捲捷捺掠掩掬敍敎敕晚晝晦桶梁梓\
+條梢梧梯梱梶椛淀淋淘淚淨淳淸淺渚烹牽猪琉\
+琢甜畢畦痔皐硏笠笥笹粕紬絃舵莊菅菖菩菱萄\
+萊萌處蛋袈袴袷訣逗這逢釦釧陷雀雫麥朗殺祥\
+敏梅凱剩勞卿厨喋喧喬單喰圍堯堰堵堺壹壺壻\
+寓巽弼悶惠惡惣惱惹戟揃插揖揭搜敦斌斐斯智\
+曾棉棧棲椀椋椙欽殘殼淵渠渥渴湊湘湛焚焰爲\
+犀琳琵琶瑛甥畫疏發盜硯硲禄稀窗竣筈筏筑粟\
+粥絢絲脹腔菰萩萬萱葎葡董葱葵葺虛蛙蛛蛤蛭\
+裡覗註詑貰貳逼遥閏隈雁靱韮黃黍黑虜隆晴猪\
+都喝既渚琢著視逸亂傭傳嘩圓塙奧嵩嵯幌愈愼\
+搔搖摸會椴椿楊楓楕楚楠楢楯楳溜溢溪溫煉煤\
+爺牌牒猷獅瑚瑞甁當畷碇碍碎碓碗祿禎禽稔稜\
+竪經罫肅腦腿舜葦蒐蒔蒙蒜蒲蒼蓉蓑蓮號蛸蛾\
+蜎裝裟詫跨遁鄕鈷鉤鉦靖飮飴馳馴鳩鼎鼠廊塚\
+靖飯勤暑煮碑僑僞劃厩厭嘉嘗圖團塵壽奬寢實\
+寬對屢嶋廓慘摑摺斡暢榊榎榛榮槇槌槍槙樺滯\
+滿漉漕漣煽熔爾瑤瑳盡碧碩稗窪箔箕粹綜綠綬\
+綴綾緋翠聡肇膏臺與蓬蔀蔓蔚蔣蔦蔭蜘蝕裳賑\
+赫輔輕遙遞鉾銑銚閤鞄頗駁魁鳳鳶齊福精飼僧\
+嘆塀慨漢禍禎署褐賓價僻儉劉劍噂噌噓增墮嬉\
+寫幡廟廠廢廣彈徵德慧慾撒撚撞撫播撰數槻樂\
+樋樓樗樞樟樣樫歎歐毅毆漑潑潛澁澗瘦磐稻箭\
+篇糊糎緖緣緬翫舖蕃蕉蕊蕎蕨蕩蕪蝦蝶誹誼諏\
+諒賣賤踐遼鄭鄰醇醉鋒鋤鋪鋲鞍駈駕髭髮魯鴇\
+齒墨層憎穀節練儘劑勳勵叡噸噺學彊憐戰擇擔\
+據曆曉槪樵樽橘橡橫歷澤澱燈燒燕獨甑禦穆穎\
+窺篦縞縣翰舘蕗薗薙薯螢衞諜諫諺謂豫賴蹄輯\
+辨遲醍醐鋸錄錆錐錘錢錨錫隨險靜鞘頸餐餘鮎\
+鮒鴛鴦鴨鴫默黛龍龜諸器謁頻壓壕嬬嬰嶺嶽彌\
+徽應戲擊擢擧曙橿檀檎檜檢濕濟濠濡濤濱瀞燐\
+營燦燭瓢癌瞥磯禪穗篠糞糟糠縱總聯聰聲膽膿\
+舊薩薰藁藏螺襃謠趨輿鍊鍍鍔鍬鍾鎚隱隸霞鞠\
+餠駿鮪鮫鮭鴻點齋館繁儲叢嚙壘擴擾斷檮歸瀆\
+瀦獵禮穣簞藝藥藪藷蟬蟲襖謬豐蹟軀轉醫醬鎗\
+鎧鎭雙雛雜鞭顏鯉鵜鵠麿謹勸壞寵懷曝櫓櫛瀕\
+瀧瀨獸癡礪禰禱穩簸簾繡繩繪繫蘇蘭蟹蟻蠅證\
+贊贋轍辭邊醱鏑關顚鯖鯛鵡鵬麒麴類懲贈難嚴\
+壤孃寶巌灌爐犧獻礦繼纂耀蠣覺觸譯釋鐙馨騷\
+鬪鰍鰐麵黨齡屬攝櫻權歡竈續纏臟覽譽轟辯鐵\
+鐸鑓驅鰭鰯鶯鷄龝欄囊灘疊穰竊聽聾讀讃轡鑄\
+韃饗鰹鰺鰻鷗響巖戀攪纖罐變鑛顯驗驛髓體鱒\
+鷲囑艷觀讓釀靈鱗鷹鷺鹼鹽麟廳灣蠻蠶鸚";
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn unicode_ranges() {
+        let ks = all_kanji();
+
+        assert_eq!(20989, ks.chars().count());
+        assert_eq!(62967, ks.len()); // Bytes.
+    }
 
     #[test]
     fn kanji_list_lengths() {
@@ -588,8 +687,9 @@ mod tests {
         assert_eq!(191, LEVEL_05.chars().count());
         assert_eq!(313, LEVEL_04.chars().count());
         assert_eq!(284, LEVEL_03.chars().count());
-        assert_eq!(328, LEVEL_02P.chars().count());
+        assert_eq!(328, LEVEL_02_PRE.chars().count());
         assert_eq!(185, LEVEL_02.chars().count());
+        assert_eq!(1238, LEVEL_01_PRE.chars().count());
     }
 
     #[test]
@@ -602,8 +702,16 @@ mod tests {
     #[test]
     fn jouyou() {
         let ks = vec![
-            LEVEL_10, LEVEL_09, LEVEL_08, LEVEL_07, LEVEL_06, LEVEL_05, LEVEL_04, LEVEL_03,
-            LEVEL_02P, LEVEL_02,
+            LEVEL_10,
+            LEVEL_09,
+            LEVEL_08,
+            LEVEL_07,
+            LEVEL_06,
+            LEVEL_05,
+            LEVEL_04,
+            LEVEL_03,
+            LEVEL_02_PRE,
+            LEVEL_02,
         ];
 
         assert_eq!(2136, ks.concat().chars().count());
