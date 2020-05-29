@@ -338,7 +338,7 @@ impl Character {
 ///
 /// Level data for Kanji above Level-2 is currently not provided by this
 /// library.
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 pub enum Level {
     Ten,
     Nine,
