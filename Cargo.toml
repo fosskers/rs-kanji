@@ -12,3 +12,6 @@ keywords = ["japan", "japanese", "kanji", "unicode"]
 categories = ["internationalization"]
 
 [dependencies]
+
+[dev-dependencies]
+version-sync = "0.9"
