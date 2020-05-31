@@ -3,5 +3,12 @@ name = "kanji"
 version = "1.0.0"
 authors = ["Colin Woodbury <colin@fosskers.ca>"]
 edition = "2018"
+description = "A library for the handling and analysis of Japanese text, particularly Kanji."
+homepage = "https://github.com/fosskers/rs-kanji"
+repository = "https://github.com/fosskers/rs-kanji"
+readme = "README.md"
+license = "MIT"
+keywords = ["japan", "japanese", "kanji", "unicode"]
+categories = ["internationalization"]
 
 [dependencies]

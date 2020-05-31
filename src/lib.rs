@@ -66,7 +66,7 @@
 //! ];
 //!
 //! for t in texts {
-//!     let counts = kanji::kanji_counts_with(t, &level_table);
+//!     let counts = kanji::kanji_counts(t, &level_table);
 //!     println!("{:#?}", counts);
 //! }
 //! ```
@@ -114,6 +114,8 @@
 //! - [級別漢字表](https://www.kanken.or.jp/kanken/outline/data/outline_degree_national_list20200217.pdf) (pdf)
 //!
 //! [changed]: https://www.kanken.or.jp/kanken/topics/data/alterclassofkanji2020.pdf
+
+#![doc(html_root_url = "https://docs.rs/kanji/1.0.0")]
 
 use std::char;
 use std::collections::HashMap;
@@ -504,21 +506,11 @@ pub fn level_table() -> HashMap<Kanji, Level> {
     hm
 }
 
-/// Determine how many Kanji of each exam level appear in some text (expensive).
-///
-/// This calls `by_levels` under the hood.
-///
-/// If you intend to do an analysis over multiple pieces of text, consider
-/// calling `by_levels` yourself, followed by `kanji_counts_with`.
-pub fn kanji_counts(s: &str) -> HashMap<Level, u32> {
-    kanji_counts_with(s, &level_table())
-}
-
 /// Determine how many Kanji of each exam level appear in some text,
 /// given a lookup table.
 ///
 /// The lookup table can be created via `by_levels`.
-pub fn kanji_counts_with(s: &str, levels: &HashMap<Kanji, Level>) -> HashMap<Level, u32> {
+pub fn kanji_counts(s: &str, levels: &HashMap<Kanji, Level>) -> HashMap<Level, u32> {
     let mut counts: HashMap<Level, u32> = HashMap::new();
 
     s.chars()
