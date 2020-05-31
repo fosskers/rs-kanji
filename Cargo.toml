@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Colin Woodbury <colin@fosskers.ca>"]
 edition = "2018"
 

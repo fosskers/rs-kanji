@@ -55,6 +55,24 @@
 //!
 //! ### Level Analysis
 //!
+//! To find out how many Kanji of each exam level belong to some text:
+//!
+//! ```
+//! let lookup_map = kanji::by_level();
+//! let texts = vec![
+//!     "非常に面白い文章",
+//!     "誰でも読んだ事のある名作",
+//!     "飛行機で空を飛ぶ",
+//! ];
+//!
+//! for t in texts {
+//!     let counts = kanji::kanji_counts_with(t, &lookup_map);
+//!     println!("{:#?}", counts);
+//! }
+//! ```
+//!
+//! And if you want to know *what* the Kanji were from a particular level:
+//!
 //! TODO
 //!
 //! # Notes on Unicode
@@ -467,6 +485,34 @@ pub fn by_level() -> HashMap<Kanji, Level> {
     });
 
     hm
+}
+
+/// Determine how many Kanji of each exam level appear in some text (expensive).
+///
+/// This calls `by_levels` under the hood.
+///
+/// If you intend to do an analysis over multiple pieces of text, consider
+/// calling `by_levels` yourself, followed by `kanji_counts_with`.
+pub fn kanji_counts(s: &str) -> HashMap<Level, u32> {
+    kanji_counts_with(s, &by_level())
+}
+
+/// Determine how many Kanji of each exam level appear in some text,
+/// given a lookup table.
+///
+/// The lookup table can be created via `by_levels`.
+pub fn kanji_counts_with(s: &str, levels: &HashMap<Kanji, Level>) -> HashMap<Level, u32> {
+    let mut counts: HashMap<Level, u32> = HashMap::new();
+
+    s.chars()
+        .filter_map(Kanji::new)
+        .filter_map(|k| levels.get(&k))
+        .for_each(|&l| {
+            let counter = counts.entry(l).or_insert(0);
+            *counter += 1;
+        });
+
+    counts
 }
 
 #[cfg(test)]
