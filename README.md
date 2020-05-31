@@ -1,6 +1,6 @@
 # Kanji
 
-[![Tests](https://github.com/fosskers/rs-kanji/workflows/build/badge.svg)](https://github.com/fosskers/rs-kanji/actions)
+[![Tests](https://github.com/fosskers/rs-kanji/workflows/Tests/badge.svg)](https://github.com/fosskers/rs-kanji/actions)
 [![](https://img.shields.io/crates/v/kanji.svg)](https://crates.io/crates/kanji)
 
 A library for the handling and analysis of Japanese text, particularly Kanji. It
