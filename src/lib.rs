@@ -136,7 +136,7 @@ pub mod exam_lists;
 /// - 働 (to do physical labour)
 ///
 /// [cjk]: https://en.wikipedia.org/wiki/Han_unification
-#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct Kanji(char);
 
 impl Kanji {
@@ -170,7 +170,7 @@ impl Kanji {
 /// women's first names are written purely in Hiragana, as the characters
 /// themselves have a soft, flowing feel to them (very much unlike the blocky,
 /// angular Katakana).
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct Hiragana(char);
 
 impl Hiragana {
@@ -207,7 +207,7 @@ impl Hiragana {
 /// It used to be common to use Katakana as Hiragana are used today, so the
 /// phrase君と街を歩きたい would have been written 君ト街ヲ歩キタイ. Admittedly
 /// strange to modern eyes!
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct Katakana(char);
 
 impl Katakana {
@@ -236,7 +236,7 @@ impl Katakana {
 }
 
 /// Japanese symbols and punctuation.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct Punctuation(char);
 
 impl Punctuation {
@@ -264,7 +264,7 @@ impl Punctuation {
 }
 
 /// Japanese full-width alphanumeric characters and a few punctuation symbols.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct AlphaNum(char);
 
 impl AlphaNum {
@@ -293,7 +293,7 @@ impl AlphaNum {
 }
 
 /// A standard ASCII character.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct ASCII(char);
 
 impl ASCII {
@@ -325,6 +325,7 @@ impl ASCII {
 ///
 /// Japanese "full-width" numbers and letters will be counted as `Number` and
 /// `Letter` respectively, alongside their usual ASCII forms.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub enum Character {
     Kanji(Kanji),
     Hiragana(Hiragana),
@@ -375,7 +376,7 @@ impl Character {
 ///
 /// Level data for Kanji above Level-2 is currently not provided by this
 /// library.
-#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub enum Level {
     Ten,
     Nine,
