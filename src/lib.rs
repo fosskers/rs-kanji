@@ -9,11 +9,12 @@
 //!
 //! # Usage
 //!
-//! Two main useful types are `Character` and `Kanji`.
+//! Two main useful types are [`Character`] and [`Kanji`].
 //!
 //! ### Reading Japanese Text
 //!
-//! To reinterpret every `char` of the input into a `Character` we can reason about:
+//! To reinterpret every `char` of the input into a [`Character`] we can reason
+//! about:
 //!
 //! ```
 //! use std::fs;
@@ -24,7 +25,7 @@
 //!   .ok();
 //! ```
 //!
-//! But maybe we're just interested in the Kanji:
+//! But maybe we're just interested in the [`Kanji`]:
 //!
 //! ```
 //! use std::fs;
@@ -35,12 +36,12 @@
 //!   .ok();
 //! ```
 //!
-//! Alongside normal pattern matching, the `Character::kanji` method can also
-//! help us extract `Kanji` values.
+//! Alongside normal pattern matching, the [`Character::kanji`] method can also
+//! help us extract [`Kanji`] values.
 //!
 //! ### Filtering
 //!
-//! In general, when we want to reduce a text to a single `Character` subtype,
+//! In general, when we want to reduce a text to a single [`Character`] subtype,
 //! we can `filter`:
 //!
 //! ```
@@ -114,6 +115,9 @@
 //! - [級別漢字表](https://www.kanken.or.jp/kanken/outline/data/outline_degree_national_list20200217.pdf) (pdf)
 //!
 //! [changed]: https://www.kanken.or.jp/kanken/topics/data/alterclassofkanji2020.pdf
+//! [`Character`]: enum.Character.html
+//! [`Character::kanji`]: enum.Character.html#method.kanji
+//! [`Kanji`]: struct.Kanji.html
 
 #![doc(html_root_url = "https://docs.rs/kanji/1.0.0")]
 
@@ -169,7 +173,7 @@ impl Kanji {
 /// and are used most often for grammatical word endings and prepositions. Some
 /// women's first names are written purely in Hiragana, as the characters
 /// themselves have a soft, flowing feel to them (very much unlike the blocky,
-/// angular Katakana).
+/// angular [`Katakana`](struct.Katakana.html)).
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct Hiragana(char);
 
@@ -200,9 +204,9 @@ impl Hiragana {
 
 /// A Katakana character, from ア to ン.
 ///
-/// These are typically learned after Hiragana, and are used to represent
-/// foreign names, sound effects, and occasionally words whose Kanji are
-/// "difficult". Two such examples are ネズミ (鼠) and アリ (蟻).
+/// These are typically learned after [`Hiragana`](struct.Hiragana.html), and
+/// are used to represent foreign names, sound effects, and occasionally words
+/// whose Kanji are "difficult". Two such examples are ネズミ (鼠) and アリ (蟻).
 ///
 /// It used to be common to use Katakana as Hiragana are used today, so the
 /// phrase君と街を歩きたい would have been written 君ト街ヲ歩キタイ. Admittedly
@@ -323,8 +327,8 @@ impl ASCII {
 /// General categories for characters, at least as is useful for thinking about
 /// Japanese.
 ///
-/// Japanese "full-width" numbers and letters will be counted as `Number` and
-/// `Letter` respectively, alongside their usual ASCII forms.
+/// Japanese "full-width" numbers and letters are counted as `AlphaNum`, whereas
+/// "normal" ASCII characters have the `ASCII` variant.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub enum Character {
     Kanji(Kanji),
@@ -349,7 +353,8 @@ impl Character {
             .unwrap_or(Character::Other(c))
     }
 
-    /// A convenience method for attempting to extract a possible `Kanji`.
+    /// A convenience method for attempting to extract a possible
+    /// [`Kanji`](struct.Kanji.html).
     pub fn kanji(&self) -> Option<Kanji> {
         match self {
             Character::Kanji(k) => Some(*k),
@@ -364,18 +369,15 @@ impl Character {
 /// from 10 to 1, including two "pre" levels between 3 and 2, and 2 and 1.
 ///
 /// Japanese students will typically have Level-5 ability by the time they
-/// finish elementary school. Level-5 accounts for 1,006 characters. By the end
-/// of middle school, they would have covered up to Level-3 (1,607 Kanji) in
+/// finish elementary school. Level-5 accounts for 1,026 characters. By the end
+/// of middle school, they would have covered up to Level-3 (1,623 Kanji) in
 /// their Japanese class curriculum.
 ///
 /// While Level-2 (2,136 Kanji) is considered "standard adult" ability, many
-/// adults would not pass the Level-2, or even the Level-Pre2 (1,940 Kanji) exam
-/// without considerable study. It is not only the reading and writing of the
-/// characters themselves that is tested, but also their associated vocabularly,
-/// usage in real text, and appearance in classic Chinese idioms (四字熟語).
-///
-/// Level data for Kanji above Level-2 is currently not provided by this
-/// library.
+/// adults would not pass the Level-2, or even the Level-Pre2 exam without
+/// considerable study. It is not only the reading and writing of the characters
+/// themselves that is tested, but also their associated vocabularly, usage in
+/// real text, and appearance in classic Chinese idioms (四字熟語).
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub enum Level {
     Ten,
@@ -416,7 +418,7 @@ pub fn is_kanji(c: &char) -> bool {
 /// Detect if a `char` is Kanji while accounting for all of the Unicode CJK
 /// extensions.
 ///
-/// `is_kanji` should be enough for normal use.
+/// [`is_kanji`](fn.is_kanji.html) should be enough for normal use.
 pub fn is_kanji_extended(c: &char) -> bool {
     (*c >= '\u{4e00}' && *c <= '\u{9ffc}') // Standard set.
         || (*c >= '\u{f900}' && *c <= '\u{faff}') // CJK Compatibility Ideographs.
@@ -510,7 +512,7 @@ pub fn level_table() -> HashMap<Kanji, Level> {
 /// Determine how many Kanji of each exam level appear in some text,
 /// given a lookup table.
 ///
-/// The lookup table can be created via `by_levels`.
+/// The lookup table can be created via [`level_table`](fn.level_table.html).
 pub fn kanji_counts(s: &str, levels: &HashMap<Kanji, Level>) -> HashMap<Level, u32> {
     let mut counts: HashMap<Level, u32> = HashMap::new();
 
