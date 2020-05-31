@@ -58,7 +58,7 @@
 //! To find out how many Kanji of each exam level belong to some text:
 //!
 //! ```
-//! let lookup_map = kanji::by_level();
+//! let level_table = kanji::level_table();
 //! let texts = vec![
 //!     "非常に面白い文章",
 //!     "誰でも読んだ事のある名作",
@@ -66,14 +66,31 @@
 //! ];
 //!
 //! for t in texts {
-//!     let counts = kanji::kanji_counts_with(t, &lookup_map);
+//!     let counts = kanji::kanji_counts_with(t, &level_table);
 //!     println!("{:#?}", counts);
 //! }
 //! ```
 //!
 //! And if you want to know *what* the Kanji were from a particular level:
 //!
-//! TODO
+//! ```
+//! let level_table = kanji::level_table();
+//! let text = "日常生活では、鮫に遭う事は基本的にない。";
+//!
+//! let ks: String = text
+//!     .chars()
+//!     // Filter out all chars that aren't Kanji.
+//!     .filter_map(kanji::Kanji::new)
+//!     // Preserve only those that appear in Level 10.
+//!     .filter_map(|k| match level_table.get(&k) {
+//!         Some(kanji::Level::Ten) => Some(k.get()),
+//!         _ => None,
+//!     })
+//!     // Fold them all back into a String.
+//!     .collect();
+//!
+//! assert_eq!("日生本", ks);
+//! ```
 //!
 //! # Notes on Unicode
 //!
@@ -459,7 +476,7 @@ pub fn all_kanji() -> String {
 
 /// Using the data stored in the `LEVEL_*` constants, generate a lookup table
 /// for Kanji levels.
-pub fn by_level() -> HashMap<Kanji, Level> {
+pub fn level_table() -> HashMap<Kanji, Level> {
     let pairs = vec![
         (exam_lists::LEVEL_10, Level::Ten),
         (exam_lists::LEVEL_09, Level::Nine),
@@ -494,7 +511,7 @@ pub fn by_level() -> HashMap<Kanji, Level> {
 /// If you intend to do an analysis over multiple pieces of text, consider
 /// calling `by_levels` yourself, followed by `kanji_counts_with`.
 pub fn kanji_counts(s: &str) -> HashMap<Level, u32> {
-    kanji_counts_with(s, &by_level())
+    kanji_counts_with(s, &level_table())
 }
 
 /// Determine how many Kanji of each exam level appear in some text,
@@ -546,13 +563,13 @@ mod tests {
     #[test]
     fn sane_overwrite() {
         let k = Kanji::new('氣').unwrap();
-        let m = by_level();
+        let m = level_table();
         assert_eq!(Some(&Level::PreOne), m.get(&k))
     }
 
     #[test]
     fn lookup_map_length() {
-        let m = by_level();
+        let m = level_table();
         assert_eq!(5906, m.len());
     }
 }
