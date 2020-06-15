@@ -119,7 +119,7 @@
 //! [`Character::kanji`]: enum.Character.html#method.kanji
 //! [`Kanji`]: struct.Kanji.html
 
-#![doc(html_root_url = "https://docs.rs/kanji/1.0.0")]
+#![doc(html_root_url = "https://docs.rs/kanji/1.0.1")]
 
 use std::char;
 use std::collections::HashMap;
@@ -345,12 +345,12 @@ impl Character {
     pub fn new(c: char) -> Character {
         Kanji::new(c)
             .map(Character::Kanji)
-            .or(Hiragana::new(c).map(Character::Hiragana))
-            .or(Katakana::new(c).map(Character::Katakana))
-            .or(Punctuation::new(c).map(Character::Punctuation))
-            .or(AlphaNum::new(c).map(Character::AlphaNum))
-            .or(ASCII::new(c).map(Character::ASCII))
-            .unwrap_or(Character::Other(c))
+            .or_else(|| Hiragana::new(c).map(Character::Hiragana))
+            .or_else(|| Katakana::new(c).map(Character::Katakana))
+            .or_else(|| Punctuation::new(c).map(Character::Punctuation))
+            .or_else(|| AlphaNum::new(c).map(Character::AlphaNum))
+            .or_else(|| ASCII::new(c).map(Character::ASCII))
+            .unwrap_or_else(|| Character::Other(c))
     }
 
     /// A convenience method for attempting to extract a possible

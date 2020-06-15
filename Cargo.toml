@@ -1,6 +1,6 @@
 [package]
 name = "kanji"
-version = "1.0.0"
+version = "1.0.1"
 authors = ["Colin Woodbury <colin@fosskers.ca>"]
 edition = "2018"
 description = "A library for the handling and analysis of Japanese text, particularly Kanji."
