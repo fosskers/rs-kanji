@@ -1,13 +1,22 @@
 use kanji::*;
-use serde_json;
+use serde::{Deserialize, Serialize};
 
 #[test]
 fn serde_instances() {
-    assert!(serde_json::from_str::<Kanji>("\"合\"").is_ok());
-    assert!(serde_json::from_str::<Hiragana>("\"あ\"").is_ok());
-    assert!(serde_json::from_str::<Katakana>("\"ア\"").is_ok());
-    assert!(serde_json::from_str::<Punctuation>("\"。\"").is_ok());
-    assert!(serde_json::from_str::<AlphaNum>("\"Ａ\"").is_ok());
-    assert!(serde_json::from_str::<ASCII>("\"a\"").is_ok());
-    assert!(serde_json::from_str::<Character>("\"魚\"").is_ok());
+    round_trip::<Kanji>("\"合\"");
+    round_trip::<Hiragana>("\"あ\"");
+    round_trip::<Katakana>("\"ア\"");
+    round_trip::<Punctuation>("\"。\"");
+    round_trip::<AlphaNum>("\"Ａ\"");
+    round_trip::<ASCII>("\"a\"");
+    round_trip::<Character>("\"魚\"");
+}
+
+fn round_trip<'a, T>(s: &'a str)
+where
+    T: Serialize + Deserialize<'a>,
+{
+    let from = serde_json::from_str::<T>(s).unwrap();
+    let to = serde_json::to_string(&from).unwrap();
+    assert_eq!(s, to);
 }
