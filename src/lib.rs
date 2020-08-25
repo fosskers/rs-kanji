@@ -124,6 +124,13 @@
 use std::char;
 use std::collections::HashMap;
 
+#[cfg(feature = "serde")]
+use serde::de::{Error, Unexpected, Visitor};
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+#[cfg(feature = "serde")]
+use std::fmt;
+
 /// A complete list of all Kanji in every level of the exam.
 pub mod exam_lists;
 
@@ -164,6 +171,45 @@ impl Kanji {
     /// Pull out the inner `char`.
     pub fn get(&self) -> char {
         self.0
+    }
+}
+
+#[cfg(feature = "serde")]
+impl Serialize for Kanji {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_char(self.0)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for Kanji {
+    fn deserialize<D>(deserializer: D) -> Result<Kanji, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_char(KanjiVisitor)?)
+    }
+}
+
+#[cfg(feature = "serde")]
+struct KanjiVisitor;
+
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for KanjiVisitor {
+    type Value = Kanji;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a character in the legal UTF8 range")
+    }
+
+    fn visit_char<E>(self, value: char) -> Result<Kanji, E>
+    where
+        E: serde::de::Error,
+    {
+        Kanji::new(value).ok_or(Error::invalid_value(Unexpected::Char(value), &self))
     }
 }
 
