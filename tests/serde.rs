@@ -5,4 +5,5 @@ use serde_json;
 fn serde_instances() {
     assert!(serde_json::from_str::<Kanji>("\"合\"").is_ok());
     assert!(serde_json::from_str::<Hiragana>("\"あ\"").is_ok());
+    assert!(serde_json::from_str::<Katakana>("\"ア\"").is_ok());
 }

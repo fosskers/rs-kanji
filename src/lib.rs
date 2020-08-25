@@ -334,6 +334,50 @@ impl Katakana {
     }
 }
 
+#[cfg(feature = "serde")]
+impl Serialize for Katakana {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_char(self.0)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for Katakana {
+    fn deserialize<D>(deserializer: D) -> Result<Katakana, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_char(KatakanaVisitor)?)
+    }
+}
+
+#[cfg(feature = "serde")]
+struct KatakanaVisitor;
+
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for KatakanaVisitor {
+    type Value = Katakana;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a character in the legal UTF8 range")
+    }
+
+    fn visit_char<E: Error>(self, v: char) -> Result<Katakana, E> {
+        Katakana::new(v).ok_or(Error::invalid_value(Unexpected::Char(v), &self))
+    }
+
+    fn visit_str<E: Error>(self, v: &str) -> Result<Katakana, E> {
+        let mut iter = v.chars();
+        match (iter.next(), iter.next()) {
+            (Some(c), None) => self.visit_char(c),
+            _ => Err(Error::invalid_value(Unexpected::Str(v), &self)),
+        }
+    }
+}
+
 /// Japanese symbols and punctuation.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct Punctuation(char);
