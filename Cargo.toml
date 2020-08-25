@@ -11,8 +11,13 @@ license = "MIT"
 keywords = ["japan", "japanese", "kanji", "unicode"]
 categories = ["internationalization"]
 
+[[test]]
+name = "serde"
+required-features = ["serde"]
+
 [dependencies]
 serde = { version = "1.0", optional = true }
 
 [dev-dependencies]
 version-sync = "0.9"
+serde_json = "1.0"

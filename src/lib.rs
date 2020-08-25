@@ -205,11 +205,16 @@ impl<'de> Visitor<'de> for KanjiVisitor {
         write!(formatter, "a character in the legal UTF8 range")
     }
 
-    fn visit_char<E>(self, value: char) -> Result<Kanji, E>
-    where
-        E: serde::de::Error,
-    {
-        Kanji::new(value).ok_or(Error::invalid_value(Unexpected::Char(value), &self))
+    fn visit_char<E: Error>(self, v: char) -> Result<Kanji, E> {
+        Kanji::new(v).ok_or(Error::invalid_value(Unexpected::Char(v), &self))
+    }
+
+    fn visit_str<E: Error>(self, v: &str) -> Result<Kanji, E> {
+        let mut iter = v.chars();
+        match (iter.next(), iter.next()) {
+            (Some(c), None) => self.visit_char(c),
+            _ => Err(Error::invalid_value(Unexpected::Str(v), &self)),
+        }
     }
 }
 
