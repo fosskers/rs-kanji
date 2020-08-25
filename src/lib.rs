@@ -176,10 +176,7 @@ impl Kanji {
 
 #[cfg(feature = "serde")]
 impl Serialize for Kanji {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_char(self.0)
     }
 }
@@ -255,10 +252,7 @@ impl Hiragana {
 
 #[cfg(feature = "serde")]
 impl Serialize for Hiragana {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_char(self.0)
     }
 }
@@ -336,10 +330,7 @@ impl Katakana {
 
 #[cfg(feature = "serde")]
 impl Serialize for Katakana {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_char(self.0)
     }
 }
@@ -408,10 +399,7 @@ impl Punctuation {
 
 #[cfg(feature = "serde")]
 impl Serialize for Punctuation {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_char(self.0)
     }
 }
@@ -481,10 +469,7 @@ impl AlphaNum {
 
 #[cfg(feature = "serde")]
 impl Serialize for AlphaNum {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_char(self.0)
     }
 }
@@ -553,10 +538,7 @@ impl ASCII {
 
 #[cfg(feature = "serde")]
 impl Serialize for ASCII {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_char(self.0)
     }
 }
@@ -649,10 +631,7 @@ impl Character {
 
 #[cfg(feature = "serde")]
 impl Serialize for Character {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         serializer.serialize_char(self.get())
     }
 }
