@@ -479,6 +479,50 @@ impl AlphaNum {
     }
 }
 
+#[cfg(feature = "serde")]
+impl Serialize for AlphaNum {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_char(self.0)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for AlphaNum {
+    fn deserialize<D>(deserializer: D) -> Result<AlphaNum, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_char(AlphaNumVisitor)?)
+    }
+}
+
+#[cfg(feature = "serde")]
+struct AlphaNumVisitor;
+
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for AlphaNumVisitor {
+    type Value = AlphaNum;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a character in the legal UTF8 range")
+    }
+
+    fn visit_char<E: Error>(self, v: char) -> Result<AlphaNum, E> {
+        AlphaNum::new(v).ok_or(Error::invalid_value(Unexpected::Char(v), &self))
+    }
+
+    fn visit_str<E: Error>(self, v: &str) -> Result<AlphaNum, E> {
+        let mut iter = v.chars();
+        match (iter.next(), iter.next()) {
+            (Some(c), None) => self.visit_char(c),
+            _ => Err(Error::invalid_value(Unexpected::Str(v), &self)),
+        }
+    }
+}
+
 /// A standard ASCII character.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct ASCII(char);
@@ -504,6 +548,50 @@ impl ASCII {
     /// Pull out the inner `char`.
     pub fn get(&self) -> char {
         self.0
+    }
+}
+
+#[cfg(feature = "serde")]
+impl Serialize for ASCII {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_char(self.0)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for ASCII {
+    fn deserialize<D>(deserializer: D) -> Result<ASCII, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_char(ASCIIVisitor)?)
+    }
+}
+
+#[cfg(feature = "serde")]
+struct ASCIIVisitor;
+
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for ASCIIVisitor {
+    type Value = ASCII;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a character in the legal UTF8 range")
+    }
+
+    fn visit_char<E: Error>(self, v: char) -> Result<ASCII, E> {
+        ASCII::new(v).ok_or(Error::invalid_value(Unexpected::Char(v), &self))
+    }
+
+    fn visit_str<E: Error>(self, v: &str) -> Result<ASCII, E> {
+        let mut iter = v.chars();
+        match (iter.next(), iter.next()) {
+            (Some(c), None) => self.visit_char(c),
+            _ => Err(Error::invalid_value(Unexpected::Str(v), &self)),
+        }
     }
 }
 
@@ -542,6 +630,63 @@ impl Character {
         match self {
             Character::Kanji(k) => Some(*k),
             _ => None,
+        }
+    }
+
+    /// Pull out the inner `char`.
+    pub fn get(&self) -> char {
+        match self {
+            Character::Kanji(c) => c.get(),
+            Character::Hiragana(c) => c.get(),
+            Character::Katakana(c) => c.get(),
+            Character::Punctuation(c) => c.get(),
+            Character::AlphaNum(c) => c.get(),
+            Character::ASCII(c) => c.get(),
+            Character::Other(c) => *c,
+        }
+    }
+}
+
+#[cfg(feature = "serde")]
+impl Serialize for Character {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_char(self.get())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for Character {
+    fn deserialize<D>(deserializer: D) -> Result<Character, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_char(CharacterVisitor)?)
+    }
+}
+
+#[cfg(feature = "serde")]
+struct CharacterVisitor;
+
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for CharacterVisitor {
+    type Value = Character;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a character in the legal UTF8 range")
+    }
+
+    fn visit_char<E: Error>(self, v: char) -> Result<Character, E> {
+        Ok(Character::new(v))
+    }
+
+    fn visit_str<E: Error>(self, v: &str) -> Result<Character, E> {
+        let mut iter = v.chars();
+        match (iter.next(), iter.next()) {
+            (Some(c), None) => self.visit_char(c),
+            _ => Err(Error::invalid_value(Unexpected::Str(v), &self)),
         }
     }
 }
