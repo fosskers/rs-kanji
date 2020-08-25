@@ -1,5 +1,11 @@
 # `kanji` Changelog
 
+## 1.1.0 (2020-08-24)
+
+#### Added
+
+- `serde` trait implementations via an optional `serde` feature.
+
 ## 1.0.1 (2020-05-15)
 
 #### Fixed

@@ -109,6 +109,9 @@
 //! assert!(!same_as_uni);
 //! ```
 //!
+//! # Features
+//! - `serde`: Enable `serde` trait implementations.
+//!
 //! # Resources
 //! - [CJK Unicode Chart](https://www.unicode.org/charts/PDF/U4E00.pdf) (pdf)
 //! - [StackOverflow: Unicode Ranges for Japanese](https://stackoverflow.com/q/19899554/643684)
@@ -119,7 +122,7 @@
 //! [`Character::kanji`]: enum.Character.html#method.kanji
 //! [`Kanji`]: struct.Kanji.html
 
-#![doc(html_root_url = "https://docs.rs/kanji/1.0.1")]
+#![doc(html_root_url = "https://docs.rs/kanji/1.1.0")]
 
 use std::char;
 use std::collections::HashMap;
