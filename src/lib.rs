@@ -406,6 +406,50 @@ impl Punctuation {
     }
 }
 
+#[cfg(feature = "serde")]
+impl Serialize for Punctuation {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_char(self.0)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for Punctuation {
+    fn deserialize<D>(deserializer: D) -> Result<Punctuation, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_char(PunctuationVisitor)?)
+    }
+}
+
+#[cfg(feature = "serde")]
+struct PunctuationVisitor;
+
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for PunctuationVisitor {
+    type Value = Punctuation;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a character in the legal UTF8 range")
+    }
+
+    fn visit_char<E: Error>(self, v: char) -> Result<Punctuation, E> {
+        Punctuation::new(v).ok_or(Error::invalid_value(Unexpected::Char(v), &self))
+    }
+
+    fn visit_str<E: Error>(self, v: &str) -> Result<Punctuation, E> {
+        let mut iter = v.chars();
+        match (iter.next(), iter.next()) {
+            (Some(c), None) => self.visit_char(c),
+            _ => Err(Error::invalid_value(Unexpected::Str(v), &self)),
+        }
+    }
+}
+
 /// Japanese full-width alphanumeric characters and a few punctuation symbols.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct AlphaNum(char);
