@@ -253,6 +253,50 @@ impl Hiragana {
     }
 }
 
+#[cfg(feature = "serde")]
+impl Serialize for Hiragana {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_char(self.0)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> Deserialize<'de> for Hiragana {
+    fn deserialize<D>(deserializer: D) -> Result<Hiragana, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Ok(deserializer.deserialize_char(HiraganaVisitor)?)
+    }
+}
+
+#[cfg(feature = "serde")]
+struct HiraganaVisitor;
+
+#[cfg(feature = "serde")]
+impl<'de> Visitor<'de> for HiraganaVisitor {
+    type Value = Hiragana;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a character in the legal UTF8 range")
+    }
+
+    fn visit_char<E: Error>(self, v: char) -> Result<Hiragana, E> {
+        Hiragana::new(v).ok_or(Error::invalid_value(Unexpected::Char(v), &self))
+    }
+
+    fn visit_str<E: Error>(self, v: &str) -> Result<Hiragana, E> {
+        let mut iter = v.chars();
+        match (iter.next(), iter.next()) {
+            (Some(c), None) => self.visit_char(c),
+            _ => Err(Error::invalid_value(Unexpected::Str(v), &self)),
+        }
+    }
+}
+
 /// A Katakana character, from ア to ン.
 ///
 /// These are typically learned after [`Hiragana`](struct.Hiragana.html), and
