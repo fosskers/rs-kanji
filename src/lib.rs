@@ -126,13 +126,12 @@
 
 use std::char;
 use std::collections::HashMap;
+use std::fmt;
 
 #[cfg(feature = "serde")]
 use serde::de::{Error, Unexpected, Visitor};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-#[cfg(feature = "serde")]
-use std::fmt;
 
 /// A complete list of all Kanji in every level of the exam.
 pub mod exam_lists;
@@ -174,6 +173,12 @@ impl Kanji {
     /// Pull out the inner `char`.
     pub fn get(&self) -> char {
         self.0
+    }
+}
+
+impl fmt::Display for Kanji {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
     }
 }
 
@@ -250,6 +255,12 @@ impl Hiragana {
     /// Pull out the inner `char`.
     pub fn get(&self) -> char {
         self.0
+    }
+}
+
+impl fmt::Display for Hiragana {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
     }
 }
 
@@ -331,6 +342,12 @@ impl Katakana {
     }
 }
 
+impl fmt::Display for Katakana {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
+    }
+}
+
 #[cfg(feature = "serde")]
 impl Serialize for Katakana {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -397,6 +414,12 @@ impl Punctuation {
     /// Pull out the inner `char`.
     pub fn get(&self) -> char {
         self.0
+    }
+}
+
+impl fmt::Display for Punctuation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
     }
 }
 
@@ -470,6 +493,12 @@ impl AlphaNum {
     }
 }
 
+impl fmt::Display for AlphaNum {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
+    }
+}
+
 #[cfg(feature = "serde")]
 impl Serialize for AlphaNum {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
@@ -536,6 +565,12 @@ impl ASCII {
     /// Pull out the inner `char`.
     pub fn get(&self) -> char {
         self.0
+    }
+}
+
+impl fmt::Display for ASCII {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
     }
 }
 
@@ -629,6 +664,12 @@ impl Character {
             Character::ASCII(c) => c.get(),
             Character::Other(c) => *c,
         }
+    }
+}
+
+impl fmt::Display for Character {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.get())
     }
 }
 
