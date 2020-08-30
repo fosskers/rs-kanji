@@ -163,7 +163,7 @@ impl Kanji {
     /// assert_eq!(None, Kanji::new('a'));
     /// ```
     pub fn new(c: char) -> Option<Kanji> {
-        if is_kanji(&c) {
+        if is_kanji(c) {
             Some(Kanji(c))
         } else {
             None
@@ -761,25 +761,16 @@ pub enum Level {
 ///
 /// [compat]: https://www.unicode.org/charts/PDF/UF900.pdf
 /// [this pdf]: https://www.unicode.org/charts/PDF/U4E00.pdf
-pub fn is_kanji(c: &char) -> bool {
-    (*c >= '\u{4e00}' && *c <= '\u{9ffc}') // Standard set.
-        || (*c >= '\u{f900}' && *c <= '\u{faff}') // CJK Compatibility Ideographs.
-}
-
-/// Detect if a `char` is Kanji while accounting for all of the Unicode CJK
-/// extensions.
-///
-/// [`is_kanji`](fn.is_kanji.html) should be enough for normal use.
-pub fn is_kanji_extended(c: &char) -> bool {
-    (*c >= '\u{4e00}' && *c <= '\u{9ffc}') // Standard set.
-        || (*c >= '\u{f900}' && *c <= '\u{faff}') // CJK Compatibility Ideographs.
-        || (*c >= '\u{3400}' && *c <= '\u{4dbf}') // Extension A
-        || (*c >= '\u{20000}' && *c <= '\u{2a6dd}') // Extension B
-        || (*c >= '\u{2a700}' && *c <= '\u{2b734}') // Extension C
-        || (*c >= '\u{2b740}' && *c <= '\u{2b81d}') // Extension D
-        || (*c >= '\u{2b820}' && *c <= '\u{2cea1}') // Extension E
-        || (*c >= '\u{2ceb0}' && *c <= '\u{2ebe0}') // Extension F
-        || (*c >= '\u{30000}' && *c <= '\u{3134a}') // Extension G
+pub fn is_kanji(c: char) -> bool {
+    (c >= '\u{4e00}' && c <= '\u{9ffc}') // Standard set.
+        || (c >= '\u{f900}' && c <= '\u{faff}') // CJK Compatibility Ideographs.
+        || (c >= '\u{3400}' && c <= '\u{4dbf}') // Extension A
+        || (c >= '\u{20000}' && c <= '\u{2a6dd}') // Extension B
+        || (c >= '\u{2a700}' && c <= '\u{2b734}') // Extension C
+        || (c >= '\u{2b740}' && c <= '\u{2b81d}') // Extension D
+        || (c >= '\u{2b820}' && c <= '\u{2cea1}') // Extension E
+        || (c >= '\u{2ceb0}' && c <= '\u{2ebe0}') // Extension F
+        || (c >= '\u{30000}' && c <= '\u{3134a}') // Extension G
 }
 
 /// Is a given `char` betwen あ and ん?

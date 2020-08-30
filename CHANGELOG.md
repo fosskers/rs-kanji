@@ -1,5 +1,16 @@
 # `kanji` Changelog
 
+## Unreleased
+
+#### Changed
+
+- `is_kanji` now does everything that `is_kanji_extended` used to.
+- The argument to `is_kanji`, etc., is now `char` instead of `&char`.
+
+#### Removed
+
+- `is_kanji_extended` has been removed in favour of `is_kanji`.
+
 ## 1.1.0 (2020-08-24)
 
 #### Added
