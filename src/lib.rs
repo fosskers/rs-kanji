@@ -47,10 +47,10 @@
 //! ```
 //! let orig = "そこで犬が寝ている";
 //!
-//! let ks: String = orig.chars().filter(kanji::is_kanji).collect();
+//! let ks: String = orig.chars().filter(|c| kanji::is_kanji(*c)).collect();
 //! assert_eq!("犬寝", ks);
 //!
-//! let hs: String = orig.chars().filter(kanji::is_hiragana).collect();
+//! let hs: String = orig.chars().filter(|c| kanji::is_hiragana(*c)).collect();
 //! assert_eq!("そこでがている", hs);
 //! ```
 //!
@@ -245,7 +245,7 @@ impl Hiragana {
     /// assert_eq!(None, Hiragana::new('a'));
     /// ```
     pub fn new(c: char) -> Option<Hiragana> {
-        if is_hiragana(&c) {
+        if is_hiragana(c) {
             Some(Hiragana(c))
         } else {
             None
@@ -329,7 +329,7 @@ impl Katakana {
     /// assert_eq!(None, Katakana::new('a'));
     /// ```
     pub fn new(c: char) -> Option<Katakana> {
-        if is_katakana(&c) {
+        if is_katakana(c) {
             Some(Katakana(c))
         } else {
             None
@@ -404,7 +404,7 @@ impl Punctuation {
     /// assert_eq!(None, Punctuation::new('a'));
     /// ```
     pub fn new(c: char) -> Option<Punctuation> {
-        if is_japanese_punct(&c) {
+        if is_japanese_punct(c) {
             Some(Punctuation(c))
         } else {
             None
@@ -480,7 +480,7 @@ impl AlphaNum {
     /// assert_eq!(None, AlphaNum::new('a'));
     /// ```
     pub fn new(c: char) -> Option<AlphaNum> {
-        if is_alphanum(&c) {
+        if is_alphanum(c) {
             Some(AlphaNum(c))
         } else {
             None
@@ -755,8 +755,8 @@ pub enum Level {
 /// Ideographs][compat] list, so there is an extra check here for those.
 ///
 /// ```
-/// assert!(kanji::is_kanji(&'澄'));  // Obviously a legal Kanji.
-/// assert!(!kanji::is_kanji(&'a'));  // Obviously not.
+/// assert!(kanji::is_kanji('澄'));  // Obviously a legal Kanji.
+/// assert!(!kanji::is_kanji('a'));  // Obviously not.
 /// ```
 ///
 /// [compat]: https://www.unicode.org/charts/PDF/UF900.pdf
@@ -776,32 +776,32 @@ pub fn is_kanji(c: char) -> bool {
 /// Is a given `char` betwen あ and ん?
 ///
 /// ```
-/// assert!(kanji::is_hiragana(&'あ'));
-/// assert!(!kanji::is_hiragana(&'a'));
+/// assert!(kanji::is_hiragana('あ'));
+/// assert!(!kanji::is_hiragana('a'));
 /// ```
-pub fn is_hiragana(c: &char) -> bool {
-    *c >= '\u{3041}' && *c <= '\u{309f}'
+pub fn is_hiragana(c: char) -> bool {
+    c >= '\u{3041}' && c <= '\u{309f}'
 }
 
 /// Is a given `char` between ア and ン?
 ///
 /// ```
-/// assert!(kanji::is_katakana(&'ン'));
-/// assert!(!kanji::is_katakana(&'a'));
+/// assert!(kanji::is_katakana('ン'));
+/// assert!(!kanji::is_katakana('a'));
 /// ```
-pub fn is_katakana(c: &char) -> bool {
-    *c >= '\u{30a0}' && *c <= '\u{30ff}'
+pub fn is_katakana(c: char) -> bool {
+    c >= '\u{30a0}' && c <= '\u{30ff}'
 }
 
 /// Does a given `char` belong to the set of Japanese symbols and punctuation?
-pub fn is_japanese_punct(c: &char) -> bool {
-    *c >= '\u{3000}' && *c <= '\u{303f}'
+pub fn is_japanese_punct(c: char) -> bool {
+    c >= '\u{3000}' && c <= '\u{303f}'
 }
 
 /// Does a given `char` belong to the set of Japanese alphanumeric characters
 /// and western punctuation?
-pub fn is_alphanum(c: &char) -> bool {
-    *c >= '\u{ff01}' && *c <= '\u{ff5e}'
+pub fn is_alphanum(c: char) -> bool {
+    c >= '\u{ff01}' && c <= '\u{ff5e}'
 }
 
 /// All possible Kanji characters, as well as non-character radicals, in a
@@ -883,18 +883,18 @@ mod tests {
 
     #[test]
     fn all_kanjiable() {
-        assert!(exam_lists::LEVEL_10.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_09.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_08.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_07.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_06.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_05.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_04.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_03.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_02_PRE.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_02.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_01_PRE.chars().all(|c| is_kanji(&c)));
-        assert!(exam_lists::LEVEL_01.chars().all(|c| is_kanji(&c)));
+        assert!(exam_lists::LEVEL_10.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_09.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_08.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_07.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_06.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_05.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_04.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_03.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_02_PRE.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_02.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_01_PRE.chars().all(|c| is_kanji(c)));
+        assert!(exam_lists::LEVEL_01.chars().all(|c| is_kanji(c)));
     }
 
     #[test]
