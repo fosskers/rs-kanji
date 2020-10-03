@@ -745,6 +745,25 @@ pub enum Level {
     One,
 }
 
+impl fmt::Display for Level {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
+        match self {
+            Level::Ten => write!(f, "十"),
+            Level::Nine => write!(f, "九"),
+            Level::Eight => write!(f, "八"),
+            Level::Seven => write!(f, "七"),
+            Level::Six => write!(f, "六"),
+            Level::Five => write!(f, "五"),
+            Level::Four => write!(f, "四"),
+            Level::Three => write!(f, "三"),
+            Level::PreTwo => write!(f, "準二"),
+            Level::Two => write!(f, "二"),
+            Level::PreOne => write!(f, "準一"),
+            Level::One => write!(f, "一"),
+        }
+    }
+}
+
 /// Kanji appear in the Unicode range 4e00 to 9ffc.
 /// The final Japanese Kanji is 9fef (鿯).
 ///
