@@ -118,9 +118,6 @@
 //! - [級別漢字表](https://www.kanken.or.jp/kanken/outline/data/outline_degree_national_list20200217.pdf) (pdf)
 //!
 //! [changed]: https://www.kanken.or.jp/kanken/topics/data/alterclassofkanji2020.pdf
-//! [`Character`]: enum.Character.html
-//! [`Character::kanji`]: enum.Character.html#method.kanji
-//! [`Kanji`]: struct.Kanji.html
 
 #![doc(html_root_url = "https://docs.rs/kanji/1.1.0")]
 
@@ -229,7 +226,7 @@ impl<'de> Visitor<'de> for KanjiVisitor {
 /// and are used most often for grammatical word endings and prepositions. Some
 /// women's first names are written purely in Hiragana, as the characters
 /// themselves have a soft, flowing feel to them (very much unlike the blocky,
-/// angular [`Katakana`](struct.Katakana.html)).
+/// angular [`Katakana`]).
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Copy, Clone)]
 pub struct Hiragana(char);
 
@@ -307,9 +304,9 @@ impl<'de> Visitor<'de> for HiraganaVisitor {
 
 /// A Katakana character, from ア to ン.
 ///
-/// These are typically learned after [`Hiragana`](struct.Hiragana.html), and
-/// are used to represent foreign names, sound effects, and occasionally words
-/// whose Kanji are "difficult". Two such examples are ネズミ (鼠) and アリ (蟻).
+/// These are typically learned after [`Hiragana`], and are used to represent
+/// foreign names, sound effects, and occasionally words whose Kanji are
+/// "difficult". Two such examples are ネズミ (鼠) and アリ (蟻).
 ///
 /// It used to be common to use Katakana as Hiragana are used today, so the
 /// phrase君と街を歩きたい would have been written 君ト街ヲ歩キタイ. Admittedly
@@ -645,7 +642,7 @@ impl Character {
     }
 
     /// A convenience method for attempting to extract a possible
-    /// [`Kanji`](struct.Kanji.html).
+    /// [`Kanji`].
     pub fn kanji(&self) -> Option<Kanji> {
         match self {
             Character::Kanji(k) => Some(*k),
@@ -873,7 +870,7 @@ pub fn level_table() -> HashMap<Kanji, Level> {
 /// Determine how many Kanji of each exam level appear in some text,
 /// given a lookup table.
 ///
-/// The lookup table can be created via [`level_table`](fn.level_table.html).
+/// The lookup table can be created via [`level_table`].
 pub fn kanji_counts(s: &str, levels: &HashMap<Kanji, Level>) -> HashMap<Level, u32> {
     let mut counts: HashMap<Level, u32> = HashMap::new();
 
