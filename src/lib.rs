@@ -821,7 +821,7 @@ pub fn is_hiragana_extended(c: char) -> bool {
 /// assert!(!kanji::is_katakana('a'));
 /// ```
 pub fn is_katakana(c: char) -> bool {
-    c >= '\u{30a1}' && c <= '\u{30fa}'
+    c >= '\u{30a1}' && c <= '\u{30fa}' || c == '\u{30fc}'
 }
 
 /// Is a given `char` between ゠ and ヿ?
