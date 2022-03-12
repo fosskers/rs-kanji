@@ -789,23 +789,51 @@ pub fn is_kanji(c: char) -> bool {
         || (c >= '\u{30000}' && c <= '\u{3134a}') // Extension G
 }
 
-/// Is a given `char` betwen あ and ん?
+/// Is a given `char` betwen あ and ゖ?
 ///
 /// ```
 /// assert!(kanji::is_hiragana('あ'));
+/// assert!(!kanji::is_hiragana('ゟ'));
 /// assert!(!kanji::is_hiragana('a'));
 /// ```
 pub fn is_hiragana(c: char) -> bool {
+    c >= '\u{3041}' && c <= '\u{3096}'
+}
+
+/// Is a given `char` betwen あ and ゟ?
+/// Strictly compliant with the [unicode definition of hiragana](https://www.unicode.org/charts/PDF/U3040.pdf),
+/// including ponctuation, marks and a digraph
+///
+/// ```
+/// assert!(kanji::is_hiragana_extended('あ'));
+/// assert!(kanji::is_hiragana_extended('ゟ'));
+/// assert!(!kanji::is_hiragana_extended('a'));
+/// ```
+pub fn is_hiragana_extended(c: char) -> bool {
     c >= '\u{3041}' && c <= '\u{309f}'
 }
 
-/// Is a given `char` between ア and ン?
+/// Is a given `char` between ァ and ヺ?
 ///
 /// ```
 /// assert!(kanji::is_katakana('ン'));
+/// assert!(!kanji::is_katakana('ヿ'));
 /// assert!(!kanji::is_katakana('a'));
 /// ```
 pub fn is_katakana(c: char) -> bool {
+    c >= '\u{30a1}' && c <= '\u{30fa}'
+}
+
+/// Is a given `char` between ゠ and ヿ?
+/// Strictly compliant with the [unicode definition of katakana](https://www.unicode.org/charts/PDF/U30A0.pdf),
+/// including ponctuation, marks and a digraph
+///
+/// ```
+/// assert!(kanji::is_katakana_extended('ン'));
+/// assert!(kanji::is_katakana_extended('ヿ'));
+/// assert!(!kanji::is_katakana_extended('a'));
+/// ```
+pub fn is_katakana_extended(c: char) -> bool {
     c >= '\u{30a0}' && c <= '\u{30ff}'
 }
 
