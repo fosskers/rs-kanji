@@ -829,7 +829,7 @@ pub fn is_katakana(c: char) -> bool {
 
 /// Is a given `char` between ゠ and ヿ?
 /// Strictly compliant with the [Unicode definition of katakana],
-/// including ponctuation, marks and a digraph
+/// including punctuation, marks and a digraph
 ///
 /// ```
 /// assert!(kanji::is_katakana_extended('ン'));
