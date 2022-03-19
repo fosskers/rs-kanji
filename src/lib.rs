@@ -802,7 +802,7 @@ pub fn is_hiragana(c: char) -> bool {
 
 /// Is a given `char` betwen あ and ゟ?
 /// Strictly compliant with the [Unicode definition of hiragana],
-/// including marks and a digraph
+/// including marks and a digraph.
 ///
 /// ```
 /// assert!(kanji::is_hiragana_extended('あ'));
