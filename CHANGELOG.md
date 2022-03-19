@@ -1,11 +1,13 @@
 # `kanji` Changelog
 
-## Unreleased
+## 2.0.0 (2022-03-19)
 
 #### Changed
 
 - `is_kanji` now does everything that `is_kanji_extended` used to.
 - The argument to `is_kanji`, etc., is now `char` instead of `&char`.
+- `is_hiragana` and `is_katakana` have had their ranges extended to better match
+  the Unicode standard.
 
 #### Removed
 

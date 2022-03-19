@@ -119,7 +119,7 @@
 //!
 //! [changed]: https://www.kanken.or.jp/kanken/topics/data/alterclassofkanji2020.pdf
 
-#![doc(html_root_url = "https://docs.rs/kanji/1.1.0")]
+#![doc(html_root_url = "https://docs.rs/kanji/2.0.0")]
 
 use std::char;
 use std::collections::HashMap;
