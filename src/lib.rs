@@ -789,7 +789,7 @@ pub fn is_kanji(c: char) -> bool {
         || (c >= '\u{30000}' && c <= '\u{3134a}') // Extension G
 }
 
-/// Is a given `char` betwen あ and ゖ?
+/// Is a given `char` betwen あ and ゖ (small け)?
 ///
 /// ```
 /// assert!(kanji::is_hiragana('あ'));
