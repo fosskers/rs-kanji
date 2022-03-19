@@ -789,56 +789,35 @@ pub fn is_kanji(c: char) -> bool {
         || (c >= '\u{30000}' && c <= '\u{3134a}') // Extension G
 }
 
-/// Is a given `char` betwen あ and ゖ (small け)?
+/// Is a given `char` betwen あ and ゟ?
+///
+/// Strictly compliant with the [Unicode definition of hiragana], including
+/// marks and a digraph.
 ///
 /// ```
 /// assert!(kanji::is_hiragana('あ'));
-/// assert!(!kanji::is_hiragana('ゟ'));
+/// assert!(kanji::is_hiragana('ゟ'));
 /// assert!(!kanji::is_hiragana('a'));
 /// ```
-pub fn is_hiragana(c: char) -> bool {
-    c >= '\u{3041}' && c <= '\u{3096}'
-}
-
-/// Is a given `char` betwen あ and ゟ?
-/// Strictly compliant with the [Unicode definition of hiragana],
-/// including marks and a digraph.
 ///
-/// ```
-/// assert!(kanji::is_hiragana_extended('あ'));
-/// assert!(kanji::is_hiragana_extended('ゟ'));
-/// assert!(!kanji::is_hiragana_extended('a'));
-/// ```
-/// 
 /// [Unicode definition of hiragana]: https://www.unicode.org/charts/PDF/U3040.pdf
-pub fn is_hiragana_extended(c: char) -> bool {
+pub fn is_hiragana(c: char) -> bool {
     c >= '\u{3041}' && c <= '\u{309f}'
 }
 
-/// Is a given `char` between ァ and ヺ?
-/// Includes the vowel prolongation mark 'ー'.
+/// Is a given `char` between ゠ and ヿ?
+///
+/// Strictly compliant with the [Unicode definition of katakana], including
+/// punctuation, marks and a digraph.
 ///
 /// ```
 /// assert!(kanji::is_katakana('ン'));
-/// assert!(!kanji::is_katakana('ヿ'));
+/// assert!(kanji::is_katakana('ヿ'));
 /// assert!(!kanji::is_katakana('a'));
 /// ```
-pub fn is_katakana(c: char) -> bool {
-    c >= '\u{30a1}' && c <= '\u{30fa}' || c == '\u{30fc}'
-}
-
-/// Is a given `char` between ゠ and ヿ?
-/// Strictly compliant with the [Unicode definition of katakana],
-/// including punctuation, marks and a digraph
 ///
-/// ```
-/// assert!(kanji::is_katakana_extended('ン'));
-/// assert!(kanji::is_katakana_extended('ヿ'));
-/// assert!(!kanji::is_katakana_extended('a'));
-/// ```
-/// 
 /// [Unicode definition of katakana]: https://www.unicode.org/charts/PDF/U30A0.pdf
-pub fn is_katakana_extended(c: char) -> bool {
+pub fn is_katakana(c: char) -> bool {
     c >= '\u{30a0}' && c <= '\u{30ff}'
 }
 
